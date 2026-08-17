@@ -13,6 +13,7 @@ import datetime
 from sqlalchemy.orm import Session
 
 from app.db import SessionLocal
+from app.embeddings import embed_texts
 from app.ingestion import chunk as chunker
 from app.ingestion import extract, ntrs_client, storage
 from app.models import Chunk, Document
@@ -51,6 +52,7 @@ def ingest_query(query: str, limit: int, db: Session) -> None:
 
         text = extract.extract_text(pdf_bytes)
         chunks = chunker.chunk_text(text)
+        embeddings = embed_texts(chunks)
 
         doc = Document(
             source_id=fields["source_id"],
@@ -65,8 +67,15 @@ def ingest_query(query: str, limit: int, db: Session) -> None:
         db.add(doc)
         db.flush()  # assigns doc.id
 
-        for i, text_chunk in enumerate(chunks):
-            db.add(Chunk(document_id=doc.id, chunk_index=i, text=text_chunk))
+        for i, (text_chunk, vector) in enumerate(zip(chunks, embeddings)):
+            db.add(
+                Chunk(
+                    document_id=doc.id,
+                    chunk_index=i,
+                    text=text_chunk,
+                    embedding=vector,
+                )
+            )
 
         db.commit()
         print(f"    stored {len(chunks)} chunks")
