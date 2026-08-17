@@ -17,6 +17,7 @@ import requests
 from app.config import settings
 
 TIMEOUT_SECONDS = 30
+NTRS_BASE_URL = "https://ntrs.nasa.gov"
 
 
 def search(query: str, page_size: int = 25, page_from: int = 0) -> list[dict[str, Any]]:
@@ -44,7 +45,8 @@ def to_document_fields(result: dict[str, Any]) -> dict[str, Any]:
     for download in result.get("downloads", []) or []:
         links = download.get("links", {}) if isinstance(download, dict) else {}
         if links.get("pdf"):
-            pdf_url = links["pdf"]
+            # Links come back as paths relative to ntrs.nasa.gov, not full URLs.
+            pdf_url = NTRS_BASE_URL + links["pdf"]
             break
 
     return {
