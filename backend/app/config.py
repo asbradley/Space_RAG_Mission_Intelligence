@@ -12,5 +12,9 @@ class Settings(BaseSettings):
     raw_storage_dir: Path = Path("../data/raw")
     ntrs_api_base: str = "https://ntrs.nasa.gov/api/citations/search"
 
+    # Local LLM generation via Ollama (brew services start ollama).
+    ollama_base_url: str = "http://localhost:11434"
+    ollama_model: str = "llama3.2:3b"
+
 
 settings = Settings()

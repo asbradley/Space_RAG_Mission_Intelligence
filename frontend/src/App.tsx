@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+import AskBox from "./AskBox";
+
 const API_BASE = "http://127.0.0.1:8001";
 
 type Document = {
@@ -45,6 +47,8 @@ export default function App() {
           </li>
         ))}
       </ul>
+
+      <AskBox />
     </main>
   );
 }

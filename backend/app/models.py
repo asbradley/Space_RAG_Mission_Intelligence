@@ -6,9 +6,10 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db import Base
 
-# Embedding dimension for OpenAI's text-embedding-3-small. Change this (and
-# re-create the column) if you pick a different embedding model in Phase 2.
-EMBEDDING_DIM = 1536
+# Embedding dimension for sentence-transformers' all-MiniLM-L6-v2 (local,
+# free, no API key — see app/embeddings.py). Change this (and re-create the
+# column) if you swap in a different embedding model.
+EMBEDDING_DIM = 384
 
 
 class Document(Base):

@@ -1,8 +1,10 @@
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app import llm, rag
 from app.db import get_db
 from app.models import Document
 
@@ -38,3 +40,28 @@ def list_documents(db: Session = Depends(get_db)):
         }
         for d in docs
     ]
+
+
+class AskRequest(BaseModel):
+    question: str
+
+
+@app.post("/ask")
+def ask(req: AskRequest, db: Session = Depends(get_db)):
+    """Phase 2: retrieve relevant chunks and ask the local LLM to answer
+    using only those excerpts. No reranking or evaluation yet — see
+    docs/ for what's still ahead."""
+    chunks = rag.retrieve(req.question, db)
+    if not chunks:
+        return {"answer": "No ingested documents to search yet.", "sources": []}
+
+    prompt = rag.build_prompt(req.question, chunks)
+    answer = llm.generate(prompt)
+
+    return {
+        "answer": answer,
+        "sources": [
+            {"title": c.document_title, "source_url": c.document_source_url}
+            for c in chunks
+        ],
+    }
