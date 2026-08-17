@@ -15,6 +15,7 @@ data/raw/*
 # Node / frontend (added in Phase 2)
 node_modules/
 dist/
+*.tsbuildinfo
 
 # OS
 .DS_Store
