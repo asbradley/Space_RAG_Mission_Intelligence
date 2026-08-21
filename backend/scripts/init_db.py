@@ -14,6 +14,14 @@ def main() -> None:
     with engine.begin() as conn:
         conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
     Base.metadata.create_all(engine)
+    with engine.begin() as conn:
+        # GIN index for Phase 3 keyword/full-text search over chunks.
+        conn.execute(
+            text(
+                "CREATE INDEX IF NOT EXISTS ix_chunks_text_search "
+                "ON chunks USING GIN (text_search)"
+            )
+        )
     print("Database initialized.")
 
 

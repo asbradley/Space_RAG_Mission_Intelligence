@@ -1,7 +1,8 @@
 import datetime
 
 from pgvector.sqlalchemy import Vector
-from sqlalchemy import DateTime, ForeignKey, Integer, String, Text, func
+from sqlalchemy import Computed, DateTime, ForeignKey, Integer, String, Text, func
+from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db import Base
@@ -56,6 +57,13 @@ class Chunk(Base):
     # ingestion (Phase 1) doesn't need to call an embedding model yet.
     embedding: Mapped[list[float] | None] = mapped_column(
         Vector(EMBEDDING_DIM), nullable=True
+    )
+
+    # Generated column for Phase 3 keyword/full-text search, kept in sync
+    # with `text` automatically by Postgres (no application code needed to
+    # maintain it). GIN-indexed — see scripts/init_db.py.
+    text_search: Mapped[str] = mapped_column(
+        TSVECTOR, Computed("to_tsvector('english', text)", persisted=True)
     )
 
     document: Mapped["Document"] = relationship(back_populates="chunks")
