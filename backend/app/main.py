@@ -48,20 +48,32 @@ class AskRequest(BaseModel):
 
 @app.post("/ask")
 def ask(req: AskRequest, db: Session = Depends(get_db)):
-    """Phase 2: retrieve relevant chunks and ask the local LLM to answer
-    using only those excerpts. No reranking or evaluation yet — see
-    docs/ for what's still ahead."""
+    """Retrieve relevant chunks, ask the local LLM to answer using only
+    those excerpts, and return the evidence behind the answer.
+
+    Each source is one distinct passage (not one per document), numbered
+    to match the [n] markers the answer cites. `cited` marks the ones the
+    answer actually referenced — best-effort, since a small local model
+    doesn't always cite reliably."""
     chunks = rag.retrieve(req.question, db)
     if not chunks:
         return {"answer": "No ingested documents to search yet.", "sources": []}
 
     prompt = rag.build_prompt(req.question, chunks)
     answer = llm.generate(prompt)
+    cited = rag.parse_citations(answer, len(chunks))
 
     return {
         "answer": answer,
         "sources": [
-            {"title": c.document_title, "source_url": c.document_source_url}
-            for c in chunks
+            {
+                "n": i,
+                "chunk_id": c.chunk_id,
+                "title": c.document_title,
+                "source_url": c.document_source_url,
+                "excerpt": c.text,
+                "cited": i in cited,
+            }
+            for i, c in enumerate(chunks, start=1)
         ],
     }
