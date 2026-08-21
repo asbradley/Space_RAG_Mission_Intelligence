@@ -1,14 +1,15 @@
-"""Phase 3: hybrid (vector + keyword) retrieval-augmented answering.
+"""Phase 4: hybrid retrieval + cross-encoder reranking.
 
 retrieve() runs two independent searches over chunks — pgvector cosine
-similarity and Postgres full-text keyword search — and merges their
-rankings with Reciprocal Rank Fusion (RRF). Vector search alone misses
-exact-term matches (acronyms, part numbers) when the surrounding meaning
-isn't a close embedding match; keyword search alone misses paraphrases.
-Combining both catches more of each. Reranking and citation tracking are
-later phases.
+similarity and Postgres full-text keyword search — merges their rankings
+with Reciprocal Rank Fusion (RRF), then reranks a wider candidate pool
+with a cross-encoder before trimming to the final top_k. RRF only knows
+where each candidate landed in two rank orderings; the cross-encoder
+actually scores each candidate's text against the question, catching
+cases where a good rank position didn't mean strong relevance. Citation
+tracking is a later phase.
 
-build_prompt() stuffs the merged results into a prompt for
+build_prompt() stuffs the final results into a prompt for
 app.llm.generate().
 """
 
@@ -17,11 +18,13 @@ from dataclasses import dataclass
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
+from app import reranker
 from app.embeddings import embed_text
 from app.models import Chunk, Document
 
 TOP_K = 5
 CANDIDATE_POOL_SIZE = 10  # how many results to pull from each search before fusion
+RERANK_POOL_SIZE = 20  # how many fused candidates to hand to the reranker
 RRF_K = 60  # standard Reciprocal Rank Fusion smoothing constant
 
 
@@ -71,13 +74,13 @@ def _reciprocal_rank_fusion(ranked_lists: list[list[int]], k: int = RRF_K) -> li
 
 
 def retrieve(question: str, db: Session, top_k: int = TOP_K) -> list[RetrievedChunk]:
-    """Return the top_k chunks for a question, combining vector similarity
-    and keyword search via Reciprocal Rank Fusion."""
+    """Return the top_k chunks for a question: vector + keyword search,
+    merged by RRF into a candidate pool, then reranked by a cross-encoder."""
     query_vector = embed_text(question)
     vector_ids = _vector_search(query_vector, db, CANDIDATE_POOL_SIZE)
     keyword_ids = _keyword_search(question, db, CANDIDATE_POOL_SIZE)
 
-    fused_ids = _reciprocal_rank_fusion([vector_ids, keyword_ids])[:top_k]
+    fused_ids = _reciprocal_rank_fusion([vector_ids, keyword_ids])[:RERANK_POOL_SIZE]
     if not fused_ids:
         return []
 
@@ -87,10 +90,13 @@ def retrieve(question: str, db: Session, top_k: int = TOP_K) -> list[RetrievedCh
         .where(Chunk.id.in_(fused_ids))
     ).all()
     by_id = {chunk.id: (chunk, document) for chunk, document in rows}
+    candidates = [by_id[cid] for cid in fused_ids if cid in by_id]
+
+    scores = reranker.rerank(question, [chunk.text for chunk, _ in candidates])
+    ranked = sorted(zip(candidates, scores), key=lambda pair: pair[1], reverse=True)
 
     results = []
-    for chunk_id in fused_ids:
-        chunk, document = by_id[chunk_id]
+    for (chunk, document), _score in ranked[:top_k]:
         results.append(
             RetrievedChunk(
                 chunk_id=chunk.id,
