@@ -1,12 +1,16 @@
-"""Phase 5: hybrid retrieval + cross-encoder reranking + cited evidence.
+"""Hybrid retrieval + cited evidence, with optional cross-encoder reranking.
 
 retrieve() runs two independent searches over chunks — pgvector cosine
-similarity and Postgres full-text keyword search — merges their rankings
-with Reciprocal Rank Fusion (RRF), then reranks a wider candidate pool
-with a cross-encoder before trimming to the final top_k. RRF only knows
-where each candidate landed in two rank orderings; the cross-encoder
-actually scores each candidate's text against the question, catching
-cases where a good rank position didn't mean strong relevance.
+similarity and Postgres full-text keyword search — and merges their
+rankings with Reciprocal Rank Fusion (RRF).
+
+A cross-encoder reranking stage (Phase 4) is available via mode=
+"reranked" but is no longer the default. Phase 6's evaluation measured it
+against the other two modes over 15 questions and it came out worst on
+answer quality: lowest fraction of expected facts present (0.567 vs
+hybrid's 0.600) and a much lower citation rate (0.467 vs 0.733). It does
+rank what it finds better (MRR 0.444 vs 0.402), so it is kept rather than
+removed — see docs/phase-6-evaluation.md.
 
 build_prompt() numbers the final results into a prompt for
 app.llm.generate(), and parse_citations() reads back which of those
@@ -82,17 +86,20 @@ def retrieve(
     question: str,
     db: Session,
     top_k: int = TOP_K,
-    mode: RetrievalMode = "reranked",
+    mode: RetrievalMode = "hybrid",
 ) -> list[RetrievedChunk]:
     """Return the top_k chunks for a question.
 
     `mode` selects how much of the pipeline runs, so the stages added in
     Phases 2-4 can be measured against each other (see
-    scripts/evaluate.py). The default reproduces current behaviour:
+    scripts/evaluate.py):
 
       vector   - pgvector cosine similarity only            (Phase 2)
       hybrid   - + keyword search, merged by RRF            (Phase 3)
       reranked - + cross-encoder over the fused candidates  (Phase 4)
+
+    Defaults to "hybrid" on the evaluation evidence above. Reranking costs
+    only ~77 ms, so the reason to leave it off is answer quality, not speed.
     """
     if mode not in ("vector", "hybrid", "reranked"):
         raise ValueError(f"unknown retrieval mode: {mode!r}")
