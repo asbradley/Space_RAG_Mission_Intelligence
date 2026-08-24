@@ -1,4 +1,4 @@
-"""Phase 4: hybrid retrieval + cross-encoder reranking.
+"""Phase 5: hybrid retrieval + cross-encoder reranking + cited evidence.
 
 retrieve() runs two independent searches over chunks — pgvector cosine
 similarity and Postgres full-text keyword search — merges their rankings
@@ -6,13 +6,14 @@ with Reciprocal Rank Fusion (RRF), then reranks a wider candidate pool
 with a cross-encoder before trimming to the final top_k. RRF only knows
 where each candidate landed in two rank orderings; the cross-encoder
 actually scores each candidate's text against the question, catching
-cases where a good rank position didn't mean strong relevance. Citation
-tracking is a later phase.
+cases where a good rank position didn't mean strong relevance.
 
-build_prompt() stuffs the final results into a prompt for
-app.llm.generate().
+build_prompt() numbers the final results into a prompt for
+app.llm.generate(), and parse_citations() reads back which of those
+numbered excerpts the answer actually cited (Phase 5).
 """
 
+import re
 from dataclasses import dataclass
 
 from sqlalchemy import func, select
@@ -109,14 +110,33 @@ def retrieve(question: str, db: Session, top_k: int = TOP_K) -> list[RetrievedCh
 
 
 def build_prompt(question: str, chunks: list[RetrievedChunk]) -> str:
+    """Build the answering prompt, numbering excerpts so the model can cite
+    them inline as [1], [2], ... — see parse_citations()."""
     context = "\n\n".join(
-        f"[Source: {c.document_title}]\n{c.text}" for c in chunks
+        f"[{i}] {c.document_title}\n{c.text}" for i, c in enumerate(chunks, start=1)
     )
     return (
         "You are answering questions using only the NASA document excerpts "
         "below. If the excerpts don't contain the answer, say so — don't "
         "make anything up.\n\n"
+        "Cite the excerpts that support your answer inline, using their "
+        "bracketed numbers (for example: \"The CSM is the Command and "
+        "Service Module [1].\").\n\n"
         f"Excerpts:\n{context}\n\n"
         f"Question: {question}\n"
         "Answer:"
     )
+
+
+def parse_citations(answer: str, num_sources: int) -> set[int]:
+    """Return the excerpt numbers the answer actually cited.
+
+    Best-effort: a small local model may cite inconsistently or not at
+    all, and may invent numbers with no excerpt behind them, so anything
+    outside 1..num_sources is discarded rather than trusted.
+    """
+    return {
+        n
+        for n in (int(m) for m in re.findall(r"\[(\d+)\]", answer))
+        if 1 <= n <= num_sources
+    }

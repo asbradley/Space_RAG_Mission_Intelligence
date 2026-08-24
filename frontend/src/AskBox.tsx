@@ -3,8 +3,12 @@ import { useState } from "react";
 const API_BASE = "http://127.0.0.1:8001";
 
 type Source = {
+  n: number;
+  chunk_id: number;
   title: string;
   source_url: string | null;
+  excerpt: string;
+  cited: boolean;
 };
 
 type AskResponse = {
@@ -64,16 +68,44 @@ export default function AskBox() {
           <p>{result.answer}</p>
           {result.sources.length > 0 && (
             <>
-              <strong>Sources:</strong>
-              <ul>
-                {result.sources.map((s, i) => (
-                  <li key={i}>
-                    <a href={s.source_url ?? "#"} target="_blank" rel="noreferrer">
-                      {s.title}
-                    </a>
+              <strong>Evidence:</strong>
+              <ol style={{ listStyle: "none", padding: 0 }}>
+                {result.sources.map((s) => (
+                  <li
+                    key={s.chunk_id}
+                    style={{
+                      margin: "0.75rem 0",
+                      padding: "0.5rem 0.75rem",
+                      // Cited passages are the ones the answer actually
+                      // referenced; the rest were retrieved but unused.
+                      borderLeft: `4px solid ${s.cited ? "#2563eb" : "#d1d5db"}`,
+                      background: s.cited ? "#f0f5ff" : "transparent",
+                    }}
+                  >
+                    <div>
+                      <strong>[{s.n}]</strong>{" "}
+                      <a href={s.source_url ?? "#"} target="_blank" rel="noreferrer">
+                        {s.title}
+                      </a>{" "}
+                      <small style={{ color: "#6b7280" }}>
+                        {s.cited ? "· cited in answer" : "· retrieved, not cited"}
+                      </small>
+                    </div>
+                    <pre
+                      style={{
+                        maxHeight: "8rem",
+                        overflowY: "auto",
+                        whiteSpace: "pre-wrap",
+                        margin: "0.5rem 0 0",
+                        fontSize: "0.85rem",
+                        color: "#374151",
+                      }}
+                    >
+                      {s.excerpt}
+                    </pre>
                   </li>
                 ))}
-              </ul>
+              </ol>
             </>
           )}
         </div>
