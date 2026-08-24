@@ -15,6 +15,7 @@ numbered excerpts the answer actually cited (Phase 5).
 
 import re
 from dataclasses import dataclass
+from typing import Literal
 
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
@@ -27,6 +28,9 @@ TOP_K = 5
 CANDIDATE_POOL_SIZE = 10  # how many results to pull from each search before fusion
 RERANK_POOL_SIZE = 20  # how many fused candidates to hand to the reranker
 RRF_K = 60  # standard Reciprocal Rank Fusion smoothing constant
+
+# Which pipeline stages retrieve() should run -- see its docstring.
+RetrievalMode = Literal["vector", "hybrid", "reranked"]
 
 
 @dataclass
@@ -74,30 +78,62 @@ def _reciprocal_rank_fusion(ranked_lists: list[list[int]], k: int = RRF_K) -> li
     return sorted(scores, key=scores.get, reverse=True)
 
 
-def retrieve(question: str, db: Session, top_k: int = TOP_K) -> list[RetrievedChunk]:
-    """Return the top_k chunks for a question: vector + keyword search,
-    merged by RRF into a candidate pool, then reranked by a cross-encoder."""
-    query_vector = embed_text(question)
-    vector_ids = _vector_search(query_vector, db, CANDIDATE_POOL_SIZE)
-    keyword_ids = _keyword_search(question, db, CANDIDATE_POOL_SIZE)
+def retrieve(
+    question: str,
+    db: Session,
+    top_k: int = TOP_K,
+    mode: RetrievalMode = "reranked",
+) -> list[RetrievedChunk]:
+    """Return the top_k chunks for a question.
 
-    fused_ids = _reciprocal_rank_fusion([vector_ids, keyword_ids])[:RERANK_POOL_SIZE]
-    if not fused_ids:
+    `mode` selects how much of the pipeline runs, so the stages added in
+    Phases 2-4 can be measured against each other (see
+    scripts/evaluate.py). The default reproduces current behaviour:
+
+      vector   - pgvector cosine similarity only            (Phase 2)
+      hybrid   - + keyword search, merged by RRF            (Phase 3)
+      reranked - + cross-encoder over the fused candidates  (Phase 4)
+    """
+    if mode not in ("vector", "hybrid", "reranked"):
+        raise ValueError(f"unknown retrieval mode: {mode!r}")
+
+    # Pull at least top_k from each search, so callers asking for a deeper
+    # top_k than the default pool size still get a full result set.
+    pool_size = max(CANDIDATE_POOL_SIZE, top_k)
+    query_vector = embed_text(question)
+    vector_ids = _vector_search(query_vector, db, pool_size)
+
+    if mode == "vector":
+        candidate_ids = vector_ids[:top_k]
+    else:
+        keyword_ids = _keyword_search(question, db, pool_size)
+        fused_ids = _reciprocal_rank_fusion([vector_ids, keyword_ids])
+        # Reranking reorders a wider pool; hybrid alone takes the fused order.
+        limit = max(RERANK_POOL_SIZE, top_k) if mode == "reranked" else top_k
+        candidate_ids = fused_ids[:limit]
+
+    if not candidate_ids:
         return []
 
     rows = db.execute(
         select(Chunk, Document)
         .join(Document, Chunk.document_id == Document.id)
-        .where(Chunk.id.in_(fused_ids))
+        .where(Chunk.id.in_(candidate_ids))
     ).all()
     by_id = {chunk.id: (chunk, document) for chunk, document in rows}
-    candidates = [by_id[cid] for cid in fused_ids if cid in by_id]
+    candidates = [by_id[cid] for cid in candidate_ids if cid in by_id]
 
-    scores = reranker.rerank(question, [chunk.text for chunk, _ in candidates])
-    ranked = sorted(zip(candidates, scores), key=lambda pair: pair[1], reverse=True)
+    if mode == "reranked":
+        scores = reranker.rerank(question, [chunk.text for chunk, _ in candidates])
+        candidates = [
+            pair
+            for pair, _score in sorted(
+                zip(candidates, scores), key=lambda pair: pair[1], reverse=True
+            )
+        ]
 
     results = []
-    for (chunk, document), _score in ranked[:top_k]:
+    for chunk, document in candidates[:top_k]:
         results.append(
             RetrievedChunk(
                 chunk_id=chunk.id,
