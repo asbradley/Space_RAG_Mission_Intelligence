@@ -126,7 +126,8 @@ def evaluate_question(
     }
 
     if with_generation:
-        answer = generate(rag.build_prompt(question["question"], chunks))
+        # Pinned so repeat runs are comparable -- see app.llm.generate.
+        answer = generate(rag.build_prompt(question["question"], chunks), temperature=0)
         result["answer"] = answer
         result["citations"] = sorted(rag.parse_citations(answer, len(chunks)))
         result.update(score_answer(answer, question))

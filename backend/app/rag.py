@@ -4,13 +4,12 @@ retrieve() runs two independent searches over chunks — pgvector cosine
 similarity and Postgres full-text keyword search — and merges their
 rankings with Reciprocal Rank Fusion (RRF).
 
-A cross-encoder reranking stage (Phase 4) is available via mode=
-"reranked" but is no longer the default. Phase 6's evaluation measured it
-against the other two modes over 15 questions and it came out worst on
-answer quality: lowest fraction of expected facts present (0.567 vs
-hybrid's 0.600) and a much lower citation rate (0.467 vs 0.733). It does
-rank what it finds better (MRR 0.444 vs 0.402), so it is kept rather than
-removed — see docs/phase-6-evaluation.md.
+A cross-encoder reranking stage (Phase 4) runs by default. Phase 6
+measured all three modes: with the per-document cap in place they tie on
+hit@5 and recall@5, and reranking leads on MRR (0.461 vs hybrid's 0.402),
+for ~77 ms. Answer-quality metrics cannot separate the modes at this eval
+size — they vary by up to 0.20 between identical runs, since generation is
+sampled at Ollama's default temperature. See docs/phase-6-evaluation.md.
 
 build_prompt() numbers the final results into a prompt for
 app.llm.generate(), and parse_citations() reads back which of those
@@ -32,6 +31,8 @@ TOP_K = 5
 CANDIDATE_POOL_SIZE = 10  # how many results to pull from each search before fusion
 RERANK_POOL_SIZE = 20  # how many fused candidates to hand to the reranker
 RRF_K = 60  # standard Reciprocal Rank Fusion smoothing constant
+MAX_CHUNKS_PER_DOCUMENT = 2  # keep one source from filling every result slot
+_SENTENCE_END = ".!?\"')]"  # trailing chars that read as a clean stop
 
 # Which pipeline stages retrieve() should run -- see its docstring.
 RetrievalMode = Literal["vector", "hybrid", "reranked"]
@@ -82,11 +83,35 @@ def _reciprocal_rank_fusion(ranked_lists: list[list[int]], k: int = RRF_K) -> li
     return sorted(scores, key=scores.get, reverse=True)
 
 
+def _cap_per_document(
+    candidates: list[tuple], top_k: int, max_per_document: int = MAX_CHUNKS_PER_DOCUMENT
+) -> list[tuple]:
+    """Trim to top_k, allowing at most max_per_document chunks per document.
+
+    Without this, a broad question ("What was the Apollo 11 mission?")
+    returns five slices of whichever single document mentions the query
+    terms most often, which reads as five near-identical excerpts. The cap
+    is a floor on source diversity, not a relevance judgement: candidates
+    passed over are used to fill any shortfall, so top_k is still met when
+    the corpus has too few documents to satisfy the cap.
+    """
+    kept, overflow, per_document = [], [], {}
+    for chunk, document in candidates:
+        if per_document.get(document.id, 0) < max_per_document:
+            kept.append((chunk, document))
+            per_document[document.id] = per_document.get(document.id, 0) + 1
+            if len(kept) == top_k:
+                return kept
+        else:
+            overflow.append((chunk, document))
+    return (kept + overflow)[:top_k]
+
+
 def retrieve(
     question: str,
     db: Session,
     top_k: int = TOP_K,
-    mode: RetrievalMode = "hybrid",
+    mode: RetrievalMode = "reranked",
 ) -> list[RetrievedChunk]:
     """Return the top_k chunks for a question.
 
@@ -98,8 +123,9 @@ def retrieve(
       hybrid   - + keyword search, merged by RRF            (Phase 3)
       reranked - + cross-encoder over the fused candidates  (Phase 4)
 
-    Defaults to "hybrid" on the evaluation evidence above. Reranking costs
-    only ~77 ms, so the reason to leave it off is answer quality, not speed.
+    Defaults to "reranked": it ties the others on hit@5 and recall@5 and
+    leads on MRR, which is the only metric that both discriminates between
+    the modes and is deterministic.
     """
     if mode not in ("vector", "hybrid", "reranked"):
         raise ValueError(f"unknown retrieval mode: {mode!r}")
@@ -110,14 +136,14 @@ def retrieve(
     query_vector = embed_text(question)
     vector_ids = _vector_search(query_vector, db, pool_size)
 
+    # Every mode keeps a pool wider than top_k, so _cap_per_document has
+    # alternatives to reach for when one document dominates the ranking.
     if mode == "vector":
-        candidate_ids = vector_ids[:top_k]
+        candidate_ids = vector_ids
     else:
         keyword_ids = _keyword_search(question, db, pool_size)
         fused_ids = _reciprocal_rank_fusion([vector_ids, keyword_ids])
-        # Reranking reorders a wider pool; hybrid alone takes the fused order.
-        limit = max(RERANK_POOL_SIZE, top_k) if mode == "reranked" else top_k
-        candidate_ids = fused_ids[:limit]
+        candidate_ids = fused_ids[: max(RERANK_POOL_SIZE, top_k)]
 
     if not candidate_ids:
         return []
@@ -140,7 +166,7 @@ def retrieve(
         ]
 
     results = []
-    for chunk, document in candidates[:top_k]:
+    for chunk, document in _cap_per_document(candidates, top_k):
         results.append(
             RetrievedChunk(
                 chunk_id=chunk.id,
@@ -150,6 +176,33 @@ def retrieve(
             )
         )
     return results
+
+
+def trim_to_word_boundaries(text: str) -> str:
+    """Drop the partial words at a chunk's edges, for display only.
+
+    Chunks are fixed-size character slices (see ingestion/chunk.py), so
+    every chunk but a document's first and last begins and ends mid-word:
+    "s, flags of the 50 states...", "...both versions are basically identi".
+
+    This is presentation only. build_prompt() and every retrieval path
+    still use the raw chunk text, so answers, embeddings and the Phase 6
+    numbers are all unaffected by it.
+    """
+    trimmed = text.strip()
+    if len(trimmed.split()) < 3:
+        return trimmed
+    # A lowercase first character means the slice landed inside a word or
+    # sentence; a real chunk start would be a capital, digit or quote.
+    if trimmed[0].islower():
+        trimmed = "\u2026" + trimmed.split(None, 1)[1]
+    if trimmed[-1] not in _SENTENCE_END:
+        trimmed = trimmed.rsplit(None, 1)[0]
+        # Dropping the fragment may have left a clean sentence end, in which
+        # case a trailing ellipsis on top of it just reads as noise.
+        if trimmed[-1] not in _SENTENCE_END:
+            trimmed += "\u2026"
+    return trimmed
 
 
 def build_prompt(question: str, chunks: list[RetrievedChunk]) -> str:
