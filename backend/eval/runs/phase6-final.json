@@ -1,0 +1,1084 @@
+{
+  "top_k": 5,
+  "summaries": {
+    "vector": {
+      "n": 15,
+      "hit@5": 0.6,
+      "mrr": 0.3766666666666667,
+      "recall@5": 0.5444444444444444,
+      "facts_present": 0.6777777777777777,
+      "ref_similarity": 0.5508269170295998,
+      "answered_with_citation": 0.5333333333333333
+    },
+    "hybrid": {
+      "n": 15,
+      "hit@5": 0.6,
+      "mrr": 0.4022222222222222,
+      "recall@5": 0.5444444444444444,
+      "facts_present": 0.6222222222222222,
+      "ref_similarity": 0.5406451932387871,
+      "answered_with_citation": 0.4
+    },
+    "reranked": {
+      "n": 15,
+      "hit@5": 0.6,
+      "mrr": 0.46111111111111114,
+      "recall@5": 0.5444444444444444,
+      "facts_present": 0.5888888888888889,
+      "ref_similarity": 0.5524346697144367,
+      "answered_with_citation": 0.6
+    }
+  },
+  "results": {
+    "vector": [
+      {
+        "id": "q01",
+        "question": "What was the primary objective of the Apollo 11 mission?",
+        "mode": "vector",
+        "hit": true,
+        "first_hit_rank": 1,
+        "reciprocal_rank": 1.0,
+        "recall": 0.6666666666666666,
+        "retrieved_chunk_ids": [
+          1092,
+          429,
+          2,
+          1094,
+          569
+        ],
+        "answer": "The primary objective of the Apollo 11 mission is stated simply: \"Perform a manned lunar landing and return\" [1].",
+        "citations": [
+          1
+        ],
+        "facts_present": 1.0,
+        "facts_missing": [],
+        "ref_similarity": 0.5626906817751913
+      },
+      {
+        "id": "q02",
+        "question": "When and from where was Apollo 11 launched?",
+        "mode": "vector",
+        "hit": false,
+        "first_hit_rank": null,
+        "reciprocal_rank": 0.0,
+        "recall": 0.0,
+        "retrieved_chunk_ids": [
+          1090,
+          1092,
+          1088,
+          1110,
+          1101
+        ],
+        "answer": "Apollo 11 was launched from Kennedy Space Center Launch Complex 39-A on July 16, 1969, at 9:32 a.m. EDT [4].",
+        "citations": [
+          4
+        ],
+        "facts_present": 1.0,
+        "facts_missing": [],
+        "ref_similarity": 0.5851367842847034
+      },
+      {
+        "id": "q03",
+        "question": "Where did the lunar module land, and at what ground elapsed time?",
+        "mode": "vector",
+        "hit": true,
+        "first_hit_rank": 5,
+        "reciprocal_rank": 0.2,
+        "recall": 1.0,
+        "retrieved_chunk_ids": [
+          573,
+          322,
+          433,
+          564,
+          12
+        ],
+        "answer": "The lunar module landed in the Sea of Tranquillity at 102:45:40 g.e.t. (ground elapsed time).",
+        "citations": [],
+        "facts_present": 0.5,
+        "facts_missing": [
+          "sea of tranquility"
+        ],
+        "ref_similarity": 0.7567983137591467
+      },
+      {
+        "id": "q04",
+        "question": "What is written on the plaque left on the Moon?",
+        "mode": "vector",
+        "hit": true,
+        "first_hit_rank": 1,
+        "reciprocal_rank": 1.0,
+        "recall": 0.5,
+        "retrieved_chunk_ids": [
+          1091,
+          735,
+          332,
+          920,
+          550
+        ],
+        "answer": "The plaque left on the Moon bears the following inscription:\n\nHERE MEN FROM THE PLANET EARTH\nFIRST SET FOOT UPON THE MOON\nJULY 1969 A.D.\nWE CAME IN PEACE FOR ALL MANKIND",
+        "citations": [],
+        "facts_present": 1.0,
+        "facts_missing": [],
+        "ref_similarity": 0.8362243256969217
+      },
+      {
+        "id": "q05",
+        "question": "Who were the backup crew for Apollo 11?",
+        "mode": "vector",
+        "hit": true,
+        "first_hit_rank": 1,
+        "reciprocal_rank": 1.0,
+        "recall": 1.0,
+        "retrieved_chunk_ids": [
+          1093,
+          1237,
+          633,
+          1234,
+          1339
+        ],
+        "answer": "The backup crew for Apollo 11 were Commander James A. Lovell, Command Module Pilot William A. Anders, and Lunar Module Pilot Fred W. Haise [2].",
+        "citations": [
+          2
+        ],
+        "facts_present": 1.0,
+        "facts_missing": [],
+        "ref_similarity": 0.6990484969258828
+      },
+      {
+        "id": "q06",
+        "question": "At what velocity did Apollo 11 enter the Earth's atmosphere?",
+        "mode": "vector",
+        "hit": true,
+        "first_hit_rank": 1,
+        "reciprocal_rank": 1.0,
+        "recall": 1.0,
+        "retrieved_chunk_ids": [
+          1101,
+          1114,
+          973,
+          18,
+          818
+        ],
+        "answer": "Apollo 11 will enter the Earth's atmosphere at 36,194 feet per second [1].",
+        "citations": [
+          1
+        ],
+        "facts_present": 1.0,
+        "facts_missing": [],
+        "ref_similarity": 0.5864871903568545
+      },
+      {
+        "id": "q07",
+        "question": "How much thrust did the service propulsion system produce for lunar orbit insertion?",
+        "mode": "vector",
+        "hit": true,
+        "first_hit_rank": 5,
+        "reciprocal_rank": 0.2,
+        "recall": 1.0,
+        "retrieved_chunk_ids": [
+          223,
+          436,
+          768,
+          973,
+          1096
+        ],
+        "answer": "The service propulsion system produced a thrust of 20,500 pounds for lunar orbit insertion [5].",
+        "citations": [
+          5
+        ],
+        "facts_present": 1.0,
+        "facts_missing": [],
+        "ref_similarity": 0.6630322755396085
+      },
+      {
+        "id": "q08",
+        "question": "How much thrust did the lunar module ascent engine produce?",
+        "mode": "vector",
+        "hit": false,
+        "first_hit_rank": null,
+        "reciprocal_rank": 0.0,
+        "recall": 0.0,
+        "retrieved_chunk_ids": [
+          1196,
+          134,
+          174,
+          1118,
+          567
+        ],
+        "answer": "The excerpt does not provide the specific thrust produced by the lunar module ascent engine.",
+        "citations": [],
+        "facts_present": 0.0,
+        "facts_missing": [
+          "3,500"
+        ],
+        "ref_similarity": 0.40062131566073805
+      },
+      {
+        "id": "q09",
+        "question": "Where was the command module expected to splash down relative to Honolulu?",
+        "mode": "vector",
+        "hit": false,
+        "first_hit_rank": null,
+        "reciprocal_rank": 0.0,
+        "recall": 0.0,
+        "retrieved_chunk_ids": [
+          964,
+          965,
+          1142,
+          427,
+          1135
+        ],
+        "answer": "The command module was expected to splash down \"recovery plus 55 hours\" after recovery, which is 55 hours after the recovery ship arrived in Hawaii. Since the recovery ship arrived in Hawaii at recovery plus 55 hours, and Honolulu is located in Hawaii, the command module was expected to splash down relative to Honolulu at that time.",
+        "citations": [],
+        "facts_present": 0.3333333333333333,
+        "facts_missing": [
+          "1040",
+          "southwest"
+        ],
+        "ref_similarity": 0.32295287773734294
+      },
+      {
+        "id": "q10",
+        "question": "What caused the computer program alarms during the lunar descent?",
+        "mode": "vector",
+        "hit": false,
+        "first_hit_rank": null,
+        "reciprocal_rank": 0.0,
+        "recall": 0.0,
+        "retrieved_chunk_ids": [
+          797,
+          955,
+          418,
+          419,
+          956
+        ],
+        "answer": "The computer program alarms during the lunar descent were symptoms of possible computer overloading, but they did not prevent the flight from continuing. The alarms were caused by a random setting of logic gates during the turn-on sequence, which generated a 520 alarm (RADAR RUPT) [1].",
+        "citations": [
+          1
+        ],
+        "facts_present": 0.3333333333333333,
+        "facts_missing": [
+          "rendezvous",
+          "interrupt"
+        ],
+        "ref_similarity": 0.47634453525312415
+      },
+      {
+        "id": "q11",
+        "question": "What was the effective area of the solar wind composition experiment foil?",
+        "mode": "vector",
+        "hit": true,
+        "first_hit_rank": 4,
+        "reciprocal_rank": 0.25,
+        "recall": 1.0,
+        "retrieved_chunk_ids": [
+          534,
+          1061,
+          907,
+          378,
+          908
+        ],
+        "answer": "The effective area of the solar wind composition experiment foil was 0.4 square meter [3].",
+        "citations": [
+          3
+        ],
+        "facts_present": 1.0,
+        "facts_missing": [],
+        "ref_similarity": 0.36999245410598636
+      },
+      {
+        "id": "q12",
+        "question": "Which ship recovered the Apollo 11 crew after splashdown?",
+        "mode": "vector",
+        "hit": true,
+        "first_hit_rank": 2,
+        "reciprocal_rank": 0.5,
+        "recall": 1.0,
+        "retrieved_chunk_ids": [
+          1135,
+          16,
+          1133,
+          568,
+          961
+        ],
+        "answer": "The USS Hornet [2, 3, 4, 5].",
+        "citations": [],
+        "facts_present": 1.0,
+        "facts_missing": [],
+        "ref_similarity": 0.7051246331292073
+      },
+      {
+        "id": "q13",
+        "question": "How were the lunar geologic samples returned to Earth?",
+        "mode": "vector",
+        "hit": false,
+        "first_hit_rank": null,
+        "reciprocal_rank": 0.0,
+        "recall": 0.0,
+        "retrieved_chunk_ids": [
+          538,
+          873,
+          866,
+          332,
+          341
+        ],
+        "answer": "There is no mention of how the lunar geologic samples were returned to Earth in the provided excerpts.",
+        "citations": [],
+        "facts_present": 0.0,
+        "facts_missing": [
+          "sealed sample return containers"
+        ],
+        "ref_similarity": 0.20104682640810437
+      },
+      {
+        "id": "q14",
+        "question": "What was the initial lunar orbit Apollo 11 was inserted into?",
+        "mode": "vector",
+        "hit": true,
+        "first_hit_rank": 2,
+        "reciprocal_rank": 0.5,
+        "recall": 1.0,
+        "retrieved_chunk_ids": [
+          171,
+          1096,
+          1088,
+          717,
+          1117
+        ],
+        "answer": "The initial lunar orbit Apollo 11 was inserted into was a 60-by-170-nautical-mile elliptical lunar orbit [5].",
+        "citations": [
+          5
+        ],
+        "facts_present": 1.0,
+        "facts_missing": [],
+        "ref_similarity": 0.7021299613330049
+      },
+      {
+        "id": "q15",
+        "question": "What did the two scientific experiments left on the lunar surface measure?",
+        "mode": "vector",
+        "hit": false,
+        "first_hit_rank": null,
+        "reciprocal_rank": 0.0,
+        "recall": 0.0,
+        "retrieved_chunk_ids": [
+          332,
+          430,
+          559,
+          967,
+          1140
+        ],
+        "answer": "The two scientific experiments left on the lunar surface are not specified in the provided excerpts.",
+        "citations": [],
+        "facts_present": 0.0,
+        "facts_missing": [
+          "moonquakes",
+          "meteoroid",
+          "laser"
+        ],
+        "ref_similarity": 0.39477308347818074
+      }
+    ],
+    "hybrid": [
+      {
+        "id": "q01",
+        "question": "What was the primary objective of the Apollo 11 mission?",
+        "mode": "hybrid",
+        "hit": true,
+        "first_hit_rank": 1,
+        "reciprocal_rank": 1.0,
+        "recall": 0.6666666666666666,
+        "retrieved_chunk_ids": [
+          429,
+          1092,
+          2,
+          1094,
+          569
+        ],
+        "answer": "The primary objective of the Apollo 11 mission is stated simply: \"Perform a manned lunar landing and return\" [3].",
+        "citations": [
+          3
+        ],
+        "facts_present": 1.0,
+        "facts_missing": [],
+        "ref_similarity": 0.5654902951081958
+      },
+      {
+        "id": "q02",
+        "question": "When and from where was Apollo 11 launched?",
+        "mode": "hybrid",
+        "hit": false,
+        "first_hit_rank": null,
+        "reciprocal_rank": 0.0,
+        "recall": 0.0,
+        "retrieved_chunk_ids": [
+          1110,
+          1092,
+          1088,
+          1101,
+          1259
+        ],
+        "answer": "Apollo 11 was launched from Kennedy Space Center Launch Complex 39A on a launch azimuth that can vary from 72 degrees to 106 degrees, depending upon the time of day of launch. The planned launch date was July 16, 1969, with liftoff at 9:32 a.m. EDT [1].",
+        "citations": [
+          1
+        ],
+        "facts_present": 1.0,
+        "facts_missing": [],
+        "ref_similarity": 0.47835260843064986
+      },
+      {
+        "id": "q03",
+        "question": "Where did the lunar module land, and at what ground elapsed time?",
+        "mode": "hybrid",
+        "hit": false,
+        "first_hit_rank": null,
+        "reciprocal_rank": 0.0,
+        "recall": 0.0,
+        "retrieved_chunk_ids": [
+          573,
+          29,
+          322,
+          582,
+          433
+        ],
+        "answer": "The lunar module landed in the Sea of Tranquillity, and the ground elapsed time was 103 hours.",
+        "citations": [],
+        "facts_present": 0.0,
+        "facts_missing": [
+          "sea of tranquility",
+          "102:45:40"
+        ],
+        "ref_similarity": 0.6471298437429946
+      },
+      {
+        "id": "q04",
+        "question": "What is written on the plaque left on the Moon?",
+        "mode": "hybrid",
+        "hit": true,
+        "first_hit_rank": 1,
+        "reciprocal_rank": 1.0,
+        "recall": 0.5,
+        "retrieved_chunk_ids": [
+          1091,
+          735,
+          332,
+          920,
+          550
+        ],
+        "answer": "The plaque left on the Moon bears the following inscription:\n\nHERE MEN FROM THE PLANET EARTH\nFIRST SET FOOT UPON THE MOON\nJULY 1969 A.D.\nWE CAME IN PEACE FOR ALL MANKIND",
+        "citations": [],
+        "facts_present": 1.0,
+        "facts_missing": [],
+        "ref_similarity": 0.8362243256969217
+      },
+      {
+        "id": "q05",
+        "question": "Who were the backup crew for Apollo 11?",
+        "mode": "hybrid",
+        "hit": true,
+        "first_hit_rank": 1,
+        "reciprocal_rank": 1.0,
+        "recall": 1.0,
+        "retrieved_chunk_ids": [
+          1093,
+          1237,
+          633,
+          1272,
+          1234
+        ],
+        "answer": "The backup crew for Apollo 11 consisted of Commander James A. Lovell, Command Module Pilot William A. Anders, and Lunar Module Pilot Fred W. Haise [2].",
+        "citations": [
+          2
+        ],
+        "facts_present": 1.0,
+        "facts_missing": [],
+        "ref_similarity": 0.7313658111564142
+      },
+      {
+        "id": "q06",
+        "question": "At what velocity did Apollo 11 enter the Earth's atmosphere?",
+        "mode": "hybrid",
+        "hit": true,
+        "first_hit_rank": 1,
+        "reciprocal_rank": 1.0,
+        "recall": 1.0,
+        "retrieved_chunk_ids": [
+          1101,
+          1114,
+          973,
+          18,
+          818
+        ],
+        "answer": "Apollo 11 will enter the Earth's atmosphere at 36,194 feet per second [1].",
+        "citations": [
+          1
+        ],
+        "facts_present": 1.0,
+        "facts_missing": [],
+        "ref_similarity": 0.5864871903568545
+      },
+      {
+        "id": "q07",
+        "question": "How much thrust did the service propulsion system produce for lunar orbit insertion?",
+        "mode": "hybrid",
+        "hit": true,
+        "first_hit_rank": 5,
+        "reciprocal_rank": 0.2,
+        "recall": 1.0,
+        "retrieved_chunk_ids": [
+          223,
+          436,
+          768,
+          973,
+          1096
+        ],
+        "answer": "The service propulsion system produced a thrust of 20,500 pounds for lunar orbit insertion [5].",
+        "citations": [
+          5
+        ],
+        "facts_present": 1.0,
+        "facts_missing": [],
+        "ref_similarity": 0.6630322755396085
+      },
+      {
+        "id": "q08",
+        "question": "How much thrust did the lunar module ascent engine produce?",
+        "mode": "hybrid",
+        "hit": false,
+        "first_hit_rank": null,
+        "reciprocal_rank": 0.0,
+        "recall": 0.0,
+        "retrieved_chunk_ids": [
+          1196,
+          134,
+          174,
+          1118,
+          567
+        ],
+        "answer": "The excerpt does not provide the specific thrust produced by the lunar module ascent engine.",
+        "citations": [],
+        "facts_present": 0.0,
+        "facts_missing": [
+          "3,500"
+        ],
+        "ref_similarity": 0.40062131566073805
+      },
+      {
+        "id": "q09",
+        "question": "Where was the command module expected to splash down relative to Honolulu?",
+        "mode": "hybrid",
+        "hit": false,
+        "first_hit_rank": null,
+        "reciprocal_rank": 0.0,
+        "recall": 0.0,
+        "retrieved_chunk_ids": [
+          964,
+          965,
+          1142,
+          427,
+          1135
+        ],
+        "answer": "The command module was expected to splash down \"recovery plus 55 hours\" after recovery, which is 55 hours after the recovery ship arrived in Hawaii. Since the recovery ship arrived in Hawaii at recovery plus 55 hours, and Honolulu is located in Hawaii, the command module was expected to splash down relative to Honolulu at that time.",
+        "citations": [],
+        "facts_present": 0.3333333333333333,
+        "facts_missing": [
+          "1040",
+          "southwest"
+        ],
+        "ref_similarity": 0.32295287773734294
+      },
+      {
+        "id": "q10",
+        "question": "What caused the computer program alarms during the lunar descent?",
+        "mode": "hybrid",
+        "hit": false,
+        "first_hit_rank": null,
+        "reciprocal_rank": 0.0,
+        "recall": 0.0,
+        "retrieved_chunk_ids": [
+          955,
+          418,
+          797,
+          419,
+          956
+        ],
+        "answer": "The computer program alarms during the lunar descent were caused by possible computer overloading, but it was decided to continue the flight despite the alarms, as they did not occur continually and proper computer navigation functions were being performed [1, 5].",
+        "citations": [],
+        "facts_present": 0.0,
+        "facts_missing": [
+          "rendezvous",
+          "radar",
+          "interrupt"
+        ],
+        "ref_similarity": 0.4559615241927639
+      },
+      {
+        "id": "q11",
+        "question": "What was the effective area of the solar wind composition experiment foil?",
+        "mode": "hybrid",
+        "hit": true,
+        "first_hit_rank": 2,
+        "reciprocal_rank": 0.5,
+        "recall": 1.0,
+        "retrieved_chunk_ids": [
+          907,
+          378,
+          534,
+          1061,
+          908
+        ],
+        "answer": "The effective area of the solar wind composition experiment foil was 0.4 square meter [1, 5].",
+        "citations": [],
+        "facts_present": 1.0,
+        "facts_missing": [],
+        "ref_similarity": 0.380582548735807
+      },
+      {
+        "id": "q12",
+        "question": "Which ship recovered the Apollo 11 crew after splashdown?",
+        "mode": "hybrid",
+        "hit": true,
+        "first_hit_rank": 2,
+        "reciprocal_rank": 0.5,
+        "recall": 1.0,
+        "retrieved_chunk_ids": [
+          1135,
+          16,
+          1133,
+          568,
+          961
+        ],
+        "answer": "The USS Hornet [2, 3, 4, 5].",
+        "citations": [],
+        "facts_present": 1.0,
+        "facts_missing": [],
+        "ref_similarity": 0.7051246331292073
+      },
+      {
+        "id": "q13",
+        "question": "How were the lunar geologic samples returned to Earth?",
+        "mode": "hybrid",
+        "hit": true,
+        "first_hit_rank": 2,
+        "reciprocal_rank": 0.5,
+        "recall": 1.0,
+        "retrieved_chunk_ids": [
+          538,
+          1097,
+          873,
+          866,
+          325
+        ],
+        "answer": "There is no excerpt that directly answers the question of how the lunar geologic samples were returned to Earth.",
+        "citations": [],
+        "facts_present": 0.0,
+        "facts_missing": [
+          "sealed sample return containers"
+        ],
+        "ref_similarity": 0.24222917486311807
+      },
+      {
+        "id": "q14",
+        "question": "What was the initial lunar orbit Apollo 11 was inserted into?",
+        "mode": "hybrid",
+        "hit": true,
+        "first_hit_rank": 3,
+        "reciprocal_rank": 0.3333333333333333,
+        "recall": 1.0,
+        "retrieved_chunk_ids": [
+          1146,
+          171,
+          1096,
+          1088,
+          717
+        ],
+        "answer": "The initial lunar orbit Apollo 11 was inserted into was a 60-by-170-nautical-mile elliptical lunar orbit [3].",
+        "citations": [
+          3
+        ],
+        "facts_present": 1.0,
+        "facts_missing": [],
+        "ref_similarity": 0.6993503907530108
+      },
+      {
+        "id": "q15",
+        "question": "What did the two scientific experiments left on the lunar surface measure?",
+        "mode": "hybrid",
+        "hit": false,
+        "first_hit_rank": null,
+        "reciprocal_rank": 0.0,
+        "recall": 0.0,
+        "retrieved_chunk_ids": [
+          332,
+          430,
+          559,
+          967,
+          1140
+        ],
+        "answer": "The two scientific experiments left on the lunar surface are not specified in the provided excerpts.",
+        "citations": [],
+        "facts_present": 0.0,
+        "facts_missing": [
+          "moonquakes",
+          "meteoroid",
+          "laser"
+        ],
+        "ref_similarity": 0.39477308347818074
+      }
+    ],
+    "reranked": [
+      {
+        "id": "q01",
+        "question": "What was the primary objective of the Apollo 11 mission?",
+        "mode": "reranked",
+        "hit": true,
+        "first_hit_rank": 1,
+        "reciprocal_rank": 1.0,
+        "recall": 0.6666666666666666,
+        "retrieved_chunk_ids": [
+          429,
+          1092,
+          967,
+          16,
+          970
+        ],
+        "answer": "The primary objective of the Apollo 11 mission was \"Perform a manned lunar landing and return\" [3].",
+        "citations": [
+          3
+        ],
+        "facts_present": 1.0,
+        "facts_missing": [],
+        "ref_similarity": 0.5811636105631229
+      },
+      {
+        "id": "q02",
+        "question": "When and from where was Apollo 11 launched?",
+        "mode": "reranked",
+        "hit": false,
+        "first_hit_rank": null,
+        "reciprocal_rank": 0.0,
+        "recall": 0.0,
+        "retrieved_chunk_ids": [
+          1110,
+          1259,
+          1088,
+          1092,
+          1090
+        ],
+        "answer": "Apollo 11 was launched from Kennedy Space Center Launch Complex 39-A on July 16, 1969, at 9:32 a.m. EDT [1].",
+        "citations": [
+          1
+        ],
+        "facts_present": 1.0,
+        "facts_missing": [],
+        "ref_similarity": 0.5877032662922973
+      },
+      {
+        "id": "q03",
+        "question": "Where did the lunar module land, and at what ground elapsed time?",
+        "mode": "reranked",
+        "hit": false,
+        "first_hit_rank": null,
+        "reciprocal_rank": 0.0,
+        "recall": 0.0,
+        "retrieved_chunk_ids": [
+          322,
+          565,
+          433,
+          564,
+          969
+        ],
+        "answer": "The lunar module landed in the Sea of Tranquillity at 102:45:40 [2].",
+        "citations": [
+          2
+        ],
+        "facts_present": 0.5,
+        "facts_missing": [
+          "sea of tranquility"
+        ],
+        "ref_similarity": 0.6681439236611961
+      },
+      {
+        "id": "q04",
+        "question": "What is written on the plaque left on the Moon?",
+        "mode": "reranked",
+        "hit": true,
+        "first_hit_rank": 1,
+        "reciprocal_rank": 1.0,
+        "recall": 0.5,
+        "retrieved_chunk_ids": [
+          1091,
+          920,
+          1086,
+          511,
+          340
+        ],
+        "answer": "The plaque left on the Moon bears the following inscription:\n\nHERE MEN FROM THE PLANET EARTH\nFIRST SET FOOT UPON THE MOON\nJULY 1969 A.D.\nWE CAME IN PEACE FOR ALL MANKIND",
+        "citations": [],
+        "facts_present": 1.0,
+        "facts_missing": [],
+        "ref_similarity": 0.8362243256969217
+      },
+      {
+        "id": "q05",
+        "question": "Who were the backup crew for Apollo 11?",
+        "mode": "reranked",
+        "hit": true,
+        "first_hit_rank": 1,
+        "reciprocal_rank": 1.0,
+        "recall": 1.0,
+        "retrieved_chunk_ids": [
+          1093,
+          1113,
+          633,
+          1237,
+          1257
+        ],
+        "answer": "The backup crew for Apollo 11 consisted of Commander James A. Lovell, Command Module Pilot William A. Anders, and Lunar Module Pilot Fred W. Haise [4].",
+        "citations": [
+          4
+        ],
+        "facts_present": 1.0,
+        "facts_missing": [],
+        "ref_similarity": 0.7267784406902674
+      },
+      {
+        "id": "q06",
+        "question": "At what velocity did Apollo 11 enter the Earth's atmosphere?",
+        "mode": "reranked",
+        "hit": true,
+        "first_hit_rank": 1,
+        "reciprocal_rank": 1.0,
+        "recall": 1.0,
+        "retrieved_chunk_ids": [
+          1101,
+          462,
+          1114,
+          973,
+          18
+        ],
+        "answer": "Apollo 11 will enter the Earth's atmosphere at 36,194 feet per second [1].",
+        "citations": [
+          1
+        ],
+        "facts_present": 1.0,
+        "facts_missing": [],
+        "ref_similarity": 0.5864871903568545
+      },
+      {
+        "id": "q07",
+        "question": "How much thrust did the service propulsion system produce for lunar orbit insertion?",
+        "mode": "reranked",
+        "hit": true,
+        "first_hit_rank": 3,
+        "reciprocal_rank": 0.3333333333333333,
+        "recall": 1.0,
+        "retrieved_chunk_ids": [
+          223,
+          763,
+          1096,
+          768,
+          19
+        ],
+        "answer": "The longest engine firing was for 357.5 seconds during the lunar orbit insertion maneuver [1, 2].",
+        "citations": [],
+        "facts_present": 0.0,
+        "facts_missing": [
+          "20,500"
+        ],
+        "ref_similarity": 0.31766365394801704
+      },
+      {
+        "id": "q08",
+        "question": "How much thrust did the lunar module ascent engine produce?",
+        "mode": "reranked",
+        "hit": false,
+        "first_hit_rank": null,
+        "reciprocal_rank": 0.0,
+        "recall": 0.0,
+        "retrieved_chunk_ids": [
+          1196,
+          567,
+          174,
+          14,
+          1126
+        ],
+        "answer": "The lunar module ascent engine produced a thrust of 6,055 fps [5].",
+        "citations": [
+          5
+        ],
+        "facts_present": 0.0,
+        "facts_missing": [
+          "3,500"
+        ],
+        "ref_similarity": 0.5423981103748222
+      },
+      {
+        "id": "q09",
+        "question": "Where was the command module expected to splash down relative to Honolulu?",
+        "mode": "reranked",
+        "hit": false,
+        "first_hit_rank": null,
+        "reciprocal_rank": 0.0,
+        "recall": 0.0,
+        "retrieved_chunk_ids": [
+          964,
+          1142,
+          962,
+          427,
+          322
+        ],
+        "answer": "The excerpt [2] Apollo 11 lunar landing mission - Press kit states: \"Hawaii (Ford Island) between 55 and 127 hours after recovery, At 130 hours it is scheduled to be loaded on a C-133 for return to Ellington AFB.\"",
+        "citations": [
+          2
+        ],
+        "facts_present": 0.0,
+        "facts_missing": [
+          "1040",
+          "southwest",
+          "honolulu"
+        ],
+        "ref_similarity": 0.362168681212221
+      },
+      {
+        "id": "q10",
+        "question": "What caused the computer program alarms during the lunar descent?",
+        "mode": "reranked",
+        "hit": false,
+        "first_hit_rank": null,
+        "reciprocal_rank": 0.0,
+        "recall": 0.0,
+        "retrieved_chunk_ids": [
+          797,
+          418,
+          956,
+          264,
+          955
+        ],
+        "answer": "The computer program alarms during the lunar descent were symptoms of possible computer overloading, but they were not continually occurring and did not prevent the continuation of the flight. The alarms were caused by a random setting of logic gates during the turn-on sequence [1].",
+        "citations": [
+          1
+        ],
+        "facts_present": 0.0,
+        "facts_missing": [
+          "rendezvous",
+          "radar",
+          "interrupt"
+        ],
+        "ref_similarity": 0.46698733386512475
+      },
+      {
+        "id": "q11",
+        "question": "What was the effective area of the solar wind composition experiment foil?",
+        "mode": "reranked",
+        "hit": true,
+        "first_hit_rank": 1,
+        "reciprocal_rank": 1.0,
+        "recall": 1.0,
+        "retrieved_chunk_ids": [
+          908,
+          378,
+          534,
+          907,
+          1061
+        ],
+        "answer": "The effective area of the solar wind composition experiment foil was 0.4 square meter [1, 4].",
+        "citations": [],
+        "facts_present": 1.0,
+        "facts_missing": [],
+        "ref_similarity": 0.3939302515522185
+      },
+      {
+        "id": "q12",
+        "question": "Which ship recovered the Apollo 11 crew after splashdown?",
+        "mode": "reranked",
+        "hit": true,
+        "first_hit_rank": 4,
+        "reciprocal_rank": 0.25,
+        "recall": 1.0,
+        "retrieved_chunk_ids": [
+          1135,
+          1133,
+          568,
+          16,
+          961
+        ],
+        "answer": "The USS Hornet [1, 2, 4, 5] recovered the Apollo 11 crew after splashdown.",
+        "citations": [],
+        "facts_present": 1.0,
+        "facts_missing": [],
+        "ref_similarity": 0.6532703347738852
+      },
+      {
+        "id": "q13",
+        "question": "How were the lunar geologic samples returned to Earth?",
+        "mode": "reranked",
+        "hit": true,
+        "first_hit_rank": 3,
+        "reciprocal_rank": 0.3333333333333333,
+        "recall": 1.0,
+        "retrieved_chunk_ids": [
+          538,
+          325,
+          1097,
+          866,
+          873
+        ],
+        "answer": "There is no excerpt that directly states how the lunar geologic samples were returned to Earth.",
+        "citations": [],
+        "facts_present": 0.0,
+        "facts_missing": [
+          "sealed sample return containers"
+        ],
+        "ref_similarity": 0.24780173754869045
+      },
+      {
+        "id": "q14",
+        "question": "What was the initial lunar orbit Apollo 11 was inserted into?",
+        "mode": "reranked",
+        "hit": true,
+        "first_hit_rank": 1,
+        "reciprocal_rank": 1.0,
+        "recall": 1.0,
+        "retrieved_chunk_ids": [
+          1096,
+          1117,
+          717,
+          171,
+          18
+        ],
+        "answer": "The initial lunar orbit Apollo 11 was inserted into was a 60-by-170-nautical-mile elliptical lunar orbit [1].",
+        "citations": [
+          1
+        ],
+        "facts_present": 1.0,
+        "facts_missing": [],
+        "ref_similarity": 0.6999430898645611
+      },
+      {
+        "id": "q15",
+        "question": "What did the two scientific experiments left on the lunar surface measure?",
+        "mode": "reranked",
+        "hit": false,
+        "first_hit_rank": null,
+        "reciprocal_rank": 0.0,
+        "recall": 0.0,
+        "retrieved_chunk_ids": [
+          14,
+          305,
+          559,
+          1137,
+          967
+        ],
+        "answer": "The two scientific experiments left on the lunar surface measured:\n\n* The Passive Seismic Experiment [4.4] and\n* The Laser Ranging Retro-Reflector Experiment [4.5]\n\nThese experiments were deployed during the extravehicular activities and were intended to be retrieved at the end of the activities for return to Earth.",
+        "citations": [],
+        "facts_present": 0.3333333333333333,
+        "facts_missing": [
+          "moonquakes",
+          "meteoroid"
+        ],
+        "ref_similarity": 0.61585609531635
+      }
+    ]
+  }
+}
