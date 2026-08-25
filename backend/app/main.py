@@ -71,7 +71,7 @@ def ask(req: AskRequest, db: Session = Depends(get_db)):
                 "chunk_id": c.chunk_id,
                 "title": c.document_title,
                 "source_url": c.document_source_url,
-                "excerpt": c.text,
+                "excerpt": rag.trim_to_word_boundaries(c.text),
                 "cited": i in cited,
             }
             for i, c in enumerate(chunks, start=1)
